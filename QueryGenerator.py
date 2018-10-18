@@ -1,4 +1,5 @@
 import csv
+import random
 
 def load_csvFiles():
     # Load data of legit queries
@@ -9,3 +10,8 @@ def load_csvFiles():
         maliciousStrings = csv.reader(maliciousFile)
     return legitStrings, maliciousStrings
 
+def generate_dataset(legitStrings, maliciousStrings):
+    for malicious in maliciousStrings:
+        legit = random.choice(legitStrings)
+        maliciousString = legit + malicious
+        print maliciousString
