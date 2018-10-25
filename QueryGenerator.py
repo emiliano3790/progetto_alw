@@ -11,24 +11,12 @@ def load_csvFiles():
     return legitStrings, maliciousStrings
 
 def generate_dataset(legitStrings, maliciousStrings):
+    for i in range(len(legitStrings)):
+        legitStrings[i] = str(legitStrings[i])[:-1]
     maliciousQueries = []
     index = 0
     for malicious in maliciousStrings:
         legit = random.choice(legitStrings)
-        maliciousQueries.append(str(legit)[:-1]+""+str(malicious)[:-1])
+        maliciousQueries.append(legit+""+str(malicious)[:-1])
         index += 1
-    # for i in range(0,10):
-    #     print len(maliciousQueries[i]), maliciousQueries[i][60], maliciousQueries[i]
-    # DA PROVARE
-    legitSet = np.array((legit,2))
-    for i in range(legitSet.shape[0]):
-        legitSet[i][1] = 0
-    maliciousSet = np.array((maliciousQueries, 2))
-    for i in range(maliciousSet.shape[0]):
-        maliciousSet[i][1] = 1
-    queryDataSet = legitSet
-    queryDataSet.append(maliciousSet)
-    queryDataSet.shuffle()
-
-a, b = load_csvFiles()
-generate_dataset(a, b)
+    return legitStrings, maliciousStrings

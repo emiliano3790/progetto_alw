@@ -5,14 +5,12 @@ attack_keywords = ["CREATE TABLE","DELETE FROM","DROP TABLE","INSERT INTO","SELE
                    #"ELT","exec","CTXSYS","CONVERT","CAST","UPPER","XMLType","UTL_INADDR","CREATE OR REPLACE FUNCTION",
                    #"DBMS_PIPE","DBMS_LOCK","NULL"]
 
-def classify(queries, labels):
-    train_set = np.zeros((len(queries), len(attack_keywords)))
-    for query_counter in len(queries):
+def classify(queries):
+    classificationSet = np.zeros((len(queries), len(attack_keywords)),dtype=int)
+    for query_counter in range(len(queries)):
         query = queries[query_counter]
-        for keyword_counter in len(attack_keywords):
+        for keyword_counter in range(len(attack_keywords)):
             keyword = attack_keywords[keyword_counter]
             if ((query.find(keyword) != -1) or (query.find(keyword.lower()) != -1) or (query.find(keyword.upper()) != -1)):
-                train_set[query_counter][keyword_counter] = 1
-    print(train_set)
-    train_label = np.array(labels)
-    return train_set, train_label
+                classificationSet[query_counter][keyword_counter] = 1
+    return classificationSet
