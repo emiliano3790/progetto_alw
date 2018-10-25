@@ -10,6 +10,20 @@ import QueryClassifier as qc
 trainSet_dim = 0.7
 testSet_dim = 0.3
 
+def splitSet(dataSet):
+    trainSet = np.zeros(((int)(trainSet_dim * len(dataSet)), len(qc.attack_keywords)),dtype=int)
+    testSet = np.zeros(((int)(testSet_dim * len(dataSet)), len(qc.attack_keywords)), dtype=int)
+    j = 0
+    for i in range(len(dataSet)):
+        if(i<(int)(trainSet_dim * len(dataSet))):
+            trainSet[i] = dataSet[i]
+        else:
+            testSet[j] = dataSet[i]
+            j += 1
+    print dataSet.shape, trainSet.shape, testSet.shape
+    print "TRAINSET:-----------------\n", trainSet
+    print "TESTSET:-----------------\n", testSet
+
 legitStrings, maliciousStrings = qg.load_csvFiles()
 legitSet, maliciousSet = qg.generate_dataset(legitStrings, maliciousStrings)
 
@@ -18,18 +32,4 @@ legitLabels = np.zeros(len(classifiedLegits), dtype=int)
 classifiedMaliciouses = qc.classify(maliciousSet)
 maliciousLabels = np.ones(len(classifiedMaliciouses), dtype=int)
 
-# for i in range(len(classifiedLegits)):
-#     print classifiedLegits[i], legitLabels[i]
-# print '\n\n'
-# for i in range(len(classifiedMaliciouses)):
-#     print classifiedMaliciouses[i], maliciousLabels[i]
-
-np.set_printoptions(threshold=sys.maxint)
-print classifiedLegits, '\n\n'
-np.random.shuffle(classifiedLegits)
-#print classifiedLegits
-legit_trainSet = np.array((trainSet_dim*len(classifiedLegits),len(qc.attack_keywords)),dtype=int)
-for i in range((int)(trainSet_dim*len(classifiedLegits))):
-    s = random.choice(classifiedLegits)
-    np.append(legit_trainSet, random.choice(classifiedLegits))
-len(qc.attack_keywords)
+splitSet(classifiedLegits)
