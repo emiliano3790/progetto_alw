@@ -24,3 +24,4 @@ for k in range(len(predictions)):
 cm = confusion_matrix(testLabels, arg_max)
 print cm, cm[0][0]
 print j, len(predictions)
+#COmmento fittizio
