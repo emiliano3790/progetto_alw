@@ -2,9 +2,9 @@ import numpy as np
 
 # List of SQL injection attack keywords
 attack_keywords = ["CREATE TABLE","DELETE FROM","DROP TABLE","INSERT INTO","SELECT","UNION","UPDATE","SET","AND","OR",
-                   "=","LIKE","load_file","information_schema","--","/*","*/"]#,"@@","sleep","DROP FUNCTION","WAITFOR",
-                   #"ELT","exec","CTXSYS","CONVERT","CAST","UPPER","XMLType","UTL_INADDR","CREATE OR REPLACE FUNCTION",
-                   #"DBMS_PIPE","DBMS_LOCK","NULL"]
+                   "=","LIKE","load_file","information_schema","--","/*","*/","@@","sleep","DROP FUNCTION","WAITFOR",
+                   "ELT","exec","CTXSYS","CONVERT","CAST","UPPER","XMLType","UTL_INADDR","CREATE OR REPLACE FUNCTION",
+                   "DBMS_PIPE","DBMS_LOCK","NULL"]
 
 # Convert a query into a features binary vector
 def classify(queries):
