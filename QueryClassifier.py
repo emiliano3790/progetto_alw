@@ -6,7 +6,7 @@ attack_keywords = ["CREATE TABLE","DELETE FROM","DROP TABLE","INSERT INTO","SELE
                    "ELT","exec","CTXSYS","CONVERT","CAST","UPPER","XMLType","UTL_INADDR","CREATE OR REPLACE FUNCTION",
                    "DBMS_PIPE","DBMS_LOCK","NULL"]
 
-# Convert a query into a features binary vector
+# Convert a query into a features binary vector according to list of attack_keywords
 def classify(queries):
     # Fill vector with zeros
     classificationSet = np.zeros((len(queries), len(attack_keywords)),dtype=int)
