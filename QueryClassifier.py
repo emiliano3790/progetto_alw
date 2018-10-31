@@ -6,14 +6,16 @@ attack_keywords = ["CREATE TABLE","DELETE FROM","DROP TABLE","INSERT INTO","SELE
                    "ELT","exec","CTXSYS","CONVERT","CAST","UPPER","XMLType","UTL_INADDR","CREATE OR REPLACE FUNCTION",
                    "DBMS_PIPE","DBMS_LOCK","NULL"]
 
+featuresSizes = [14, len(attack_keywords)]
+
 # Convert a query into a features binary vector according to list of attack_keywords
-def classify(queries):
+def classify(queries, featuresNum):
     # Fill vector with zeros
-    classificationSet = np.zeros((len(queries), len(attack_keywords)),dtype=int)
+    classificationSet = np.zeros((len(queries), featuresNum),dtype=int)
     for query_counter in range(len(queries)):
         # Select a query from the list
         query = queries[query_counter]
-        for keyword_counter in range(len(attack_keywords)):
+        for keyword_counter in range(featuresNum):
             # Select a keyword (feature) from the list
             keyword = attack_keywords[keyword_counter]
             # Check if query contains the selected keyword
