@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 
+
 # Create a neural network with the given size of the input layer
 def create_neural_network(inputDim):
     # Number of neurons of hidden layer

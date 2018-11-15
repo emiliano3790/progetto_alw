@@ -2,7 +2,7 @@ import numpy as np
 import Tools as tl
 
 # List of SQL injection attack keywords
-attack_keywords = ["CREATE TABLE","DELETE FROM","DROP TABLE","INSERT INTO","SELECT","UNION","UPDATE","SET","AND","OR",
+attack_keywords = ["CREATE TABLE", "DELETE FROM","DROP TABLE","INSERT INTO","SELECT","UNION","UPDATE","SET","AND","OR",
                    "=","LIKE","load_file","information_schema","--","/*","*/","@@","sleep","DROP FUNCTION","WAITFOR",
                    "ELT","exec","CTXSYS","CONVERT","CAST","UPPER","XMLType","UTL_INADDR","CREATE OR REPLACE FUNCTION",
                    "DBMS_PIPE","DBMS_LOCK","NULL"]

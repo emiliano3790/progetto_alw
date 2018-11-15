@@ -18,7 +18,14 @@ def openOutputFile():
     sheet.write(0, 3, 'FP')
     sheet.write(0, 4, 'FN')
     sheet.write(0, 5, 'TP')
+    sheet.write(0, 6, 'Accuracy')
+    sheet.write(0, 7, 'Precision')
+    sheet.write(0, 8, 'Recall')
+    sheet.write(0, 9, 'Spec')
+    sheet.write(0, 10, 'F1 Score')
+    sheet.write(0, 11, 'Q-Factor')
     return workbook, sheet
+
 
 def writeResult(featuresNum, epochsNum, confusion_matrix, sheet, row):
     # Write data
@@ -29,10 +36,29 @@ def writeResult(featuresNum, epochsNum, confusion_matrix, sheet, row):
         sheet.write(row, col, elem[0])
         sheet.write(row, col + 1, elem[1])
         col += 2
+    acc, prec, rec, spec, f1_score, q_fac = computeMetrics(confusion_matrix)
+    sheet.write(row, 6, acc)
+    sheet.write(row, 7, prec)
+    sheet.write(row, 8, rec)
+    sheet.write(row, 9, spec)
+    sheet.write(row, 10, f1_score)
+    sheet.write(row, 11, q_fac)
     return row+1
+
+
+def computeMetrics(cm):
+    acc = float(cm[0][0] + cm[1][1])/(cm[0][0] + cm[0][1] + cm[1][0] + cm[1][1])  # (TN + TP)/(TN + FP + FN + TP)
+    prec = float(cm[1][1])/(cm[1][1] + cm[0][1])  # TP/(TP + FP)
+    rec = float(cm[1][1])/(cm[1][1] + cm[1][0])  # TP/(TP + FN)
+    spec = float(cm[0][0])/(cm[0][0] + cm[0][1])  # TN/(TN + FP)
+    f1_score = (2 * prec * rec)/(prec + rec)
+    q_fac = rec/math.sqrt(float(cm[0][1])/(cm[0][1] + cm[0][0]))  # rec/sqrt(FP/(FP + TN))
+    return acc, prec, rec, spec, f1_score, q_fac
+
 
 def closeOutputFile(workbook):
     workbook.close()
+
 
 def loadData():
     # Read from files
@@ -40,6 +66,7 @@ def loadData():
     # Create SQL Injection queries
     legitSet, maliciousSet = qg.generate_dataset(legitStrings, maliciousStrings)
     return legitSet, maliciousSet
+
 
 # Split set for train and test phases
 def splitSet(dataSet, featuresNum, setExtraFeatures):
@@ -57,6 +84,7 @@ def splitSet(dataSet, featuresNum, setExtraFeatures):
             testSet[j] = dataSet[i]
             j += 1
     return trainSet, testSet
+
 
 # Create datasets for neural network from csv files
 def getDatasets(legitSet, maliciousSet, featuresNum, setExtraFeatures):
@@ -76,6 +104,7 @@ def getDatasets(legitSet, maliciousSet, featuresNum, setExtraFeatures):
     testSet = np.vstack((legitTestSet, maliciousTestSet))
     testLabels = np.append(legitTestLabels, maliciousTestLabels)
     return trainSet, trainLabels, testSet, testLabels
+
 
 # Compute Shannon entropy of the given string (query)
 def shannonEntropy(string):

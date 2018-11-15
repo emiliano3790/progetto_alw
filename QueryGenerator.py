@@ -10,6 +10,7 @@ def load_csvFiles():
         maliciousStrings = list(maliciousFile)
     return legitStrings, maliciousStrings
 
+
 # Create malicious SQL queries concatenating a legit query with an attack string
 def generate_dataset(legitStrings, maliciousStrings):
     for i in range(len(legitStrings)):
