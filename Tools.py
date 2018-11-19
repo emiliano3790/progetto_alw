@@ -46,6 +46,7 @@ def writeResult(featuresNum, epochsNum, confusion_matrix, sheet, row):
     return row+1
 
 
+# Compute metrics for evaluation of the model
 def computeMetrics(cm):
     acc = float(cm[0][0] + cm[1][1])/(cm[0][0] + cm[0][1] + cm[1][0] + cm[1][1])  # (TN + TP)/(TN + FP + FN + TP)
     prec = float(cm[1][1])/(cm[1][1] + cm[0][1])  # TP/(TP + FP)
@@ -60,6 +61,7 @@ def closeOutputFile(workbook):
     workbook.close()
 
 
+# Load lists of queries from files
 def loadData():
     # Read from files
     legitStrings, maliciousStrings = qg.load_csvFiles()
