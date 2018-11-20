@@ -1,13 +1,17 @@
 import random
 
 # Open csv files with legit SQL queries and malicious attack strings
-def load_csvFiles():
+def load_csvFiles(balancedDatasets):
     # Load data of legit queries
     with open('Dataset/legit.csv', mode='r') as legitFile:
         legitStrings = list(legitFile)
-    # Load data of SQL injection attacks
-    with open('Dataset/malicious.csv', mode='r') as maliciousFile:
-        maliciousStrings = list(maliciousFile)
+    # Load data of SQL injection attacks according if balanced or unbalanced datasets are required
+    if balancedDatasets:
+        with open('Dataset/maliciousBalanced.csv', mode='r') as maliciousFile:
+            maliciousStrings = list(maliciousFile)
+    else:
+        with open('Dataset/maliciousUnbalanced.csv', mode='r') as maliciousFile:
+            maliciousStrings = list(maliciousFile)
     return legitStrings, maliciousStrings
 
 

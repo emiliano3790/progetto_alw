@@ -7,9 +7,12 @@ import QueryGenerator as qg
 
 trainSet_dim = 0.7
 
-def openOutputFile():
-    # Create a workbook and add a worksheet.
-    workbook = xlsxwriter.Workbook('Results.xlsx')
+def openOutputFile(balancedDatasets):
+    # Create a workbook and add a worksheet according if balanced or unbalanced datasets are used
+    if balancedDatasets:
+        workbook = xlsxwriter.Workbook('BalancedResults.xlsx')
+    else:
+        workbook = xlsxwriter.Workbook('UnbalancedResults.xlsx')
     sheet = workbook.add_worksheet()
     # Write header line
     sheet.write(0, 0, 'featuresNum')
@@ -62,9 +65,9 @@ def closeOutputFile(workbook):
 
 
 # Load lists of queries from files
-def loadData():
+def loadData(balanceDatasets):
     # Read from files
-    legitStrings, maliciousStrings = qg.load_csvFiles()
+    legitStrings, maliciousStrings = qg.load_csvFiles(balanceDatasets)
     # Create SQL Injection queries
     legitSet, maliciousSet = qg.generate_dataset(legitStrings, maliciousStrings)
     return legitSet, maliciousSet
