@@ -27,6 +27,8 @@ def openOutputFile(balancedDatasets):
     sheet.write(0, 9, 'Spec')
     sheet.write(0, 10, 'F1 Score')
     sheet.write(0, 11, 'Q-Factor')
+    sheet.write(0, 12, 'Acc Mean')
+    sheet.write(0, 13, 'Acc Std')
     return workbook, sheet
 
 
@@ -46,6 +48,12 @@ def writeResult(featuresNum, epochsNum, confusion_matrix, sheet, row):
     sheet.write(row, 9, spec)
     sheet.write(row, 10, f1_score)
     sheet.write(row, 11, q_fac)
+    return row+1
+
+def writeResultCV(mean, std, sheet, row):
+    # Write data for Cross Validation
+    sheet.write(row, 12, mean)
+    sheet.write(row, 13, std)
     return row+1
 
 
@@ -118,3 +126,21 @@ def shannonEntropy(string):
     # Compute entropy
     entropy = - sum([p * math.log(p) / math.log(2.0) for p in prob])
     return entropy
+
+
+# Create datasets for neural network from csv files for Cross Validation
+def getDatasetsCV(legitSet, maliciousSet, featuresNum, setExtraFeatures):
+    # Classify queries
+    classifiedLegits = qc.classify(legitSet, featuresNum, setExtraFeatures)
+    classifiedMaliciouses = qc.classify(maliciousSet, featuresNum, setExtraFeatures)
+    # Create label sets
+    legitLabels = np.zeros(len(classifiedLegits), dtype=float)
+    maliciousLabels = np.ones(len(classifiedMaliciouses), dtype=float)
+    # Merge two sets and label sets
+    dataset = np.vstack((classifiedLegits, classifiedMaliciouses))
+    datasetLabels = np.append(legitLabels, maliciousLabels)
+    return dataset, datasetLabels
+
+
+
+

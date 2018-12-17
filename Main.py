@@ -1,8 +1,16 @@
 import numpy as np
 from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import StratifiedKFold
 import QueryClassifier as qc
 import NeuralNetwork as nn
 import Tools as tl
+
+# Variables
+startEpochsNum = 10
+endEpochsNum = 310
+epochsGap = 10
+k = 5     # Folds num
+seed = 7  # Seed for random_state of StratifiedKFold
 
 # Create balanced and unbalanced datasets to compare different neural networks
 for balanceDatasets in range(0, 2):
@@ -16,15 +24,18 @@ for balanceDatasets in range(0, 2):
     for setExtraFeatures in range(0, 2):
         # Varying number of attack keywordsfeatures, create and test different neural networks
         for featuresNum in qc.attackKeywordsSize:
+
+            ####### Test Model #######
             # Create train and test sets and labels
-            trainSet, trainLabels, testSet, testLabels = tl.getDatasets(legitSet, maliciousSet, featuresNum, setExtraFeatures)
+            trainSet, trainLabels, testSet, testLabels = tl.getDatasets(legitSet, maliciousSet, featuresNum,
+                                                                        setExtraFeatures)
             # Create neural network
             if setExtraFeatures:
                 neuralNetwork = nn.create_neural_network(featuresNum + 2)
             else:
                 neuralNetwork = nn.create_neural_network(featuresNum)
             # Vary training process
-            for epochsNum in range(10, 310, 10):
+            for epochsNum in range(startEpochsNum, endEpochsNum, epochsGap):
                 # Train neural network
                 neuralNetwork.fit(trainSet, trainLabels, epochsNum)
                 print neuralNetwork.summary()
@@ -37,4 +48,28 @@ for balanceDatasets in range(0, 2):
                 # Write confusion matrix on the output file
                 cm = confusion_matrix(testLabels, arg_max)
                 row = tl.writeResult(featuresNum, epochsNum, cm, sheet, row)
+
+            ####### Cross Validation #######
+            # Create datasets
+            dataset, datasetLabels = tl.getDatasetsCV(legitSet, maliciousSet, featuresNum, setExtraFeatures)
+            kfold = StratifiedKFold(n_splits=k, random_state=seed, shuffle=True)
+            cvscores = []
+            row = 1
+            for trainSet, testSet in kfold.split(dataset, datasetLabels):
+                # Create neural network
+                if setExtraFeatures:
+                    neuralNetwork = nn.create_neural_network(featuresNum + 2)
+                else:
+                    neuralNetwork = nn.create_neural_network(featuresNum)
+                # Vary training process
+                for epochsNum in range(startEpochsNum, endEpochsNum, epochsGap):
+                    # Train neural network
+                    neuralNetwork.fit(dataset[trainSet], datasetLabels[trainSet], epochsNum)
+                    print neuralNetwork.summary()
+                    # Evaluate the model accuracy
+                    scores = neuralNetwork.evaluate(dataset[testSet], datasetLabels[testSet], verbose=0)
+                    cvscores.append(scores[1] * 100)
+                # Write accuracy mean and std dev
+                row = tl.writeResultCV(np.mean(cvscores), np.std(cvscores), sheet, row)
+
     tl.closeOutputFile(workbook)
