@@ -24,18 +24,21 @@ for balanceDatasets in range(0, 2):
     for setExtraFeatures in range(0, 2):
         # Varying number of attack keywordsfeatures, create and test different neural networks
         for featuresNum in qc.attackKeywordsSize:
-
-            ####### Test Model #######
-            # Create train and test sets and labels
+            # Create train and test sets and labels for test model
             trainSet, trainLabels, testSet, testLabels = tl.getDatasets(legitSet, maliciousSet, featuresNum,
                                                                         setExtraFeatures)
-            # Create neural network
-            if setExtraFeatures:
-                neuralNetwork = nn.create_neural_network(featuresNum + 2)
-            else:
-                neuralNetwork = nn.create_neural_network(featuresNum)
+            # Create datasets for Cross Validation
+            dataset, datasetLabels = tl.getDatasetsCV(legitSet, maliciousSet, featuresNum, setExtraFeatures)
+            kfold = StratifiedKFold(n_splits=k, random_state=seed, shuffle=True)
             # Vary training process
             for epochsNum in range(startEpochsNum, endEpochsNum, epochsGap):
+
+                ####### Test Model #######
+                # Create neural network
+                if setExtraFeatures:
+                    neuralNetwork = nn.create_neural_network(featuresNum + 2)
+                else:
+                    neuralNetwork = nn.create_neural_network(featuresNum)
                 # Train neural network
                 neuralNetwork.fit(trainSet, trainLabels, epochsNum)
                 print neuralNetwork.summary()
@@ -45,31 +48,25 @@ for balanceDatasets in range(0, 2):
                 arg_max = np.zeros(len(predictions), dtype=int)
                 for k in range(len(predictions)):
                     arg_max[k] = np.argmax(predictions[k])
-                # Write confusion matrix on the output file
+                # Create confusion matrix
                 cm = confusion_matrix(testLabels, arg_max)
-                row = tl.writeResult(featuresNum, epochsNum, cm, sheet, row)
 
-            ####### Cross Validation #######
-            # Create datasets
-            dataset, datasetLabels = tl.getDatasetsCV(legitSet, maliciousSet, featuresNum, setExtraFeatures)
-            kfold = StratifiedKFold(n_splits=k, random_state=seed, shuffle=True)
-            cvscores = []
-            row = 1
-            for trainSet, testSet in kfold.split(dataset, datasetLabels):
+                ####### Cross Validation #######
                 # Create neural network
                 if setExtraFeatures:
                     neuralNetwork = nn.create_neural_network(featuresNum + 2)
                 else:
                     neuralNetwork = nn.create_neural_network(featuresNum)
-                # Vary training process
-                for epochsNum in range(startEpochsNum, endEpochsNum, epochsGap):
+                cvscores = []
+                for trainSet, testSet in kfold.split(dataset, datasetLabels):
                     # Train neural network
                     neuralNetwork.fit(dataset[trainSet], datasetLabels[trainSet], epochsNum)
                     print neuralNetwork.summary()
                     # Evaluate the model accuracy
                     scores = neuralNetwork.evaluate(dataset[testSet], datasetLabels[testSet], verbose=0)
                     cvscores.append(scores[1] * 100)
-                # Write accuracy mean and std dev
-                row = tl.writeResultCV(np.mean(cvscores), np.std(cvscores), sheet, row)
+
+                # Write results on the output file
+                row = tl.writeResult(featuresNum, epochsNum, cm, np.mean(cvscores), np.std(cvscores), sheet, row)
 
     tl.closeOutputFile(workbook)

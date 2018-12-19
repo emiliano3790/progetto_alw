@@ -32,7 +32,7 @@ def openOutputFile(balancedDatasets):
     return workbook, sheet
 
 
-def writeResult(featuresNum, epochsNum, confusion_matrix, sheet, row):
+def writeResult(featuresNum, epochsNum, confusion_matrix, mean, std, sheet, row):
     # Write data
     sheet.write(row, 0, featuresNum)
     sheet.write(row, 1, epochsNum)
@@ -48,10 +48,6 @@ def writeResult(featuresNum, epochsNum, confusion_matrix, sheet, row):
     sheet.write(row, 9, spec)
     sheet.write(row, 10, f1_score)
     sheet.write(row, 11, q_fac)
-    return row+1
-
-def writeResultCV(mean, std, sheet, row):
-    # Write data for Cross Validation
     sheet.write(row, 12, mean)
     sheet.write(row, 13, std)
     return row+1
