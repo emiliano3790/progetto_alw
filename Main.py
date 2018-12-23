@@ -58,12 +58,12 @@ for balanceDatasets in range(0, 2):
                 else:
                     neuralNetwork = nn.create_neural_network(featuresNum)
                 cvscores = []
-                for trainSet, testSet in kfold.split(dataset, datasetLabels):
+                for trainSetCV, testSetCV in kfold.split(dataset, datasetLabels):
                     # Train neural network
-                    neuralNetwork.fit(dataset[trainSet], datasetLabels[trainSet], epochsNum)
+                    neuralNetwork.fit(dataset[trainSetCV], datasetLabels[trainSetCV], epochsNum)
                     print neuralNetwork.summary()
                     # Evaluate the model accuracy
-                    scores = neuralNetwork.evaluate(dataset[testSet], datasetLabels[testSet], verbose=0)
+                    scores = neuralNetwork.evaluate(dataset[testSetCV], datasetLabels[testSetCV], verbose=0)
                     cvscores.append(scores[1] * 100)
 
                 # Write results on the output file
